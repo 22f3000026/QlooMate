@@ -1,0 +1,19 @@
+{
+  "name": "delivery-function",
+  "version": "1.0.0",
+  "description": "Delivery function to send movie recommendations to users",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "node-appwrite": "13.0.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+} 

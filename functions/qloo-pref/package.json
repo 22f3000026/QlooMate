@@ -1,0 +1,21 @@
+{
+  "name": "qloo-pref",
+  "version": "1.0.0",
+  "description": "Qloo preference-based content generation function",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "node-appwrite": "^13.0.1",
+    "node-fetch": "^3.3.2"
+  },
+  "keywords": [
+    "appwrite",
+    "qloo",
+    "preferences",
+    "content-generation"
+  ],
+  "author": "",
+  "license": "ISC"
+}

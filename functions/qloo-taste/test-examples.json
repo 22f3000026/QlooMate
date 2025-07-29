@@ -1,0 +1,144 @@
+{
+  "examples": [
+    {
+      "name": "Movie Recommendation - Action Films",
+      "description": "Find trending action movies similar to popular franchises",
+      "body": {
+        "inspiration": "I want to discover action movies similar to Marvel and Fast & Furious franchises, preferably from the last 5 years with high ratings"
+      }
+    },
+    {
+      "name": "Artist Discovery - Pop Music",
+      "description": "Find pop artists similar to Taylor Swift and Ariana Grande",
+      "body": {
+        "inspiration": "I'm looking for pop artists similar to Taylor Swift and Ariana Grande, preferably trending artists with high streaming numbers"
+      }
+    },
+    {
+      "name": "Destination Travel - Summer 2024",
+      "description": "Find trending travel destinations for summer 2024",
+      "body": {
+        "inspiration": "I want to discover trending travel destinations for summer 2024, preferably beach locations with good weather and cultural attractions"
+      }
+    },
+    {
+      "name": "Video Game - RPG Recommendations",
+      "description": "Find RPG games similar to popular titles",
+      "body": {
+        "inspiration": "I'm looking for RPG video games similar to The Witcher 3 and Skyrim, preferably with open world and fantasy elements"
+      }
+    },
+    {
+      "name": "TV Show - Drama Series",
+      "description": "Find drama TV shows similar to popular series",
+      "body": {
+        "inspiration": "I want to discover drama TV shows similar to Breaking Bad and Game of Thrones, preferably with complex characters and high production value"
+      }
+    },
+    {
+      "name": "Book - Fantasy Novels",
+      "description": "Find fantasy books similar to popular series",
+      "body": {
+        "inspiration": "I'm looking for fantasy books similar to Harry Potter and Lord of the Rings, preferably with magic systems and epic adventures"
+      }
+    },
+    {
+      "name": "Brand - Tech Companies",
+      "description": "Find tech brands similar to Apple and Google",
+      "body": {
+        "inspiration": "I want to discover tech brands similar to Apple and Google, preferably innovative companies with strong brand recognition"
+      }
+    },
+    {
+      "name": "Podcast - True Crime",
+      "description": "Find true crime podcasts similar to popular ones",
+      "body": {
+        "inspiration": "I'm looking for true crime podcasts similar to Serial and My Favorite Murder, preferably with investigative journalism and storytelling"
+      }
+    },
+    {
+      "name": "Place - Coffee Shops",
+      "description": "Find coffee shops in trendy neighborhoods",
+      "body": {
+        "inspiration": "I want to discover trendy coffee shops in hip neighborhoods, preferably with good ambiance and specialty coffee"
+      }
+    },
+    {
+      "name": "Person - Tech Influencers",
+      "description": "Find tech influencers similar to popular ones",
+      "body": {
+        "inspiration": "I'm looking for tech influencers similar to Elon Musk and Mark Zuckerberg, preferably innovative entrepreneurs and thought leaders"
+      }
+    }
+  ],
+  "simple_test": {
+    "name": "Simple Test - Movie",
+    "description": "Basic movie recommendation test",
+    "body": {
+      "inspiration": "Find action movies from 2023"
+    }
+  },
+  "complex_test": {
+    "name": "Complex Test - Artist with Location",
+    "description": "Complex query with multiple filters and signals",
+    "body": {
+      "inspiration": "Find pop artists similar to Taylor Swift who are trending in Los Angeles, with high streaming numbers and social media presence"
+    }
+  },
+  "audience_test_1": {
+    "name": "Audience Test - Young Adults",
+    "description": "Test that should trigger audience search for young adults (LLM should generate: [{\"keyword\": \"young adults\", \"parentType\": \"urn:audience:life_stage\"}, {\"keyword\": \"18-25\", \"parentType\": \"urn:audience:life_stage\"}])",
+    "body": {
+      "inspiration": "Find movies popular among young adults aged 18-25, preferably action and comedy genres from the last 2 years"
+    }
+  },
+  "audience_test_2": {
+    "name": "Audience Test - Tech Professionals",
+    "description": "Test that should trigger audience search for tech professionals (LLM should generate: [{\"keyword\": \"tech professionals\", \"parentType\": \"urn:audience:professional_area\"}, {\"keyword\": \"software developers\", \"parentType\": \"urn:audience:professional_area\"}])",
+    "body": {
+      "inspiration": "Find tech brands and products popular among tech professionals and software developers, preferably innovative startups"
+    }
+  },
+  "audience_test_3": {
+    "name": "Audience Test - Travel Enthusiasts",
+    "description": "Test that should trigger audience search for travel enthusiasts",
+    "body": {
+      "inspiration": "Find travel destinations popular among adventure travelers and backpackers, preferably budget-friendly locations with outdoor activities"
+    }
+  },
+  "audience_test_4": {
+    "name": "Audience Test - Students",
+    "description": "Test that should trigger audience search for students",
+    "body": {
+      "inspiration": "Find books and study materials popular among college students and university students, preferably academic and educational content"
+    }
+  },
+  "audience_test_5": {
+    "name": "Audience Test - Parents",
+    "description": "Test that should trigger audience search for parents",
+    "body": {
+      "inspiration": "Find family-friendly movies and TV shows popular among parents with young children, preferably educational and entertaining content"
+    }
+  },
+  "audience_test_6": {
+    "name": "Audience Test - Gamers",
+    "description": "Test that should trigger audience search for gamers",
+    "body": {
+      "inspiration": "Find video games popular among gamers and gaming enthusiasts, preferably action and adventure games"
+    }
+  },
+  "audience_test_7": {
+    "name": "Audience Test - Fitness Enthusiasts",
+    "description": "Test that should trigger audience search for fitness enthusiasts",
+    "body": {
+      "inspiration": "Find fitness brands and products popular among fitness enthusiasts and gym-goers, preferably workout equipment and supplements"
+    }
+  },
+  "audience_test_8": {
+    "name": "Audience Test - Travelers",
+    "description": "Test that should trigger audience search for travelers",
+    "body": {
+      "inspiration": "Find travel destinations popular among adventure travelers and backpackers, preferably budget-friendly locations with outdoor activities"
+    }
+  }
+} 

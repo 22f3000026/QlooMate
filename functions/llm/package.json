@@ -1,0 +1,20 @@
+{
+  "name": "llm-function",
+  "version": "1.0.0",
+  "description": "LLM function to process booking data from booking-email-monitor",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "node-appwrite": "12.0.1",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+} 

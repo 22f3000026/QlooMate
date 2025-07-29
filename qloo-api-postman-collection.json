@@ -1,0 +1,285 @@
+{
+  "info": {
+    "name": "Qloo Insights API - Hackathon",
+    "description": "Collection for testing Qloo Insights API v2 with various entity types and filters",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Movies - Basic",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "your-api-key-here",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://hackathon.api.qloo.com/v2/insights/?filter.type=urn:entity:movie",
+          "protocol": "https",
+          "host": ["hackathon", "api", "qloo", "com"],
+          "path": ["v2", "insights", ""],
+          "query": [
+            {
+              "key": "filter.type",
+              "value": "urn:entity:movie"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Movies - With Signal Entity",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "your-api-key-here",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://hackathon.api.qloo.com/v2/insights/?filter.type=urn:entity:movie&signal.entity=Maa",
+          "protocol": "https",
+          "host": ["hackathon", "api", "qloo", "com"],
+          "path": ["v2", "insights", ""],
+          "query": [
+            {
+              "key": "filter.type",
+              "value": "urn:entity:movie"
+            },
+            {
+              "key": "signal.entity",
+              "value": "Maa"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Restaurants - With Theatre Signal",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "your-api-key-here",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://hackathon.api.qloo.com/v2/insights/?filter.type=urn:entity:restaurant&signal.entity=INOX Phoenix Market City (formerly Jazz Cinemas), Velachery, Chennai",
+          "protocol": "https",
+          "host": ["hackathon", "api", "qloo", "com"],
+          "path": ["v2", "insights", ""],
+          "query": [
+            {
+              "key": "filter.type",
+              "value": "urn:entity:restaurant"
+            },
+            {
+              "key": "signal.entity",
+              "value": "INOX Phoenix Market City (formerly Jazz Cinemas), Velachery, Chennai"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Restaurants - Basic",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "your-api-key-here",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://hackathon.api.qloo.com/v2/insights/?filter.type=urn:entity:restaurant",
+          "protocol": "https",
+          "host": ["hackathon", "api", "qloo", "com"],
+          "path": ["v2", "insights", ""],
+          "query": [
+            {
+              "key": "filter.type",
+              "value": "urn:entity:restaurant"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Nightlife - With Theatre Signal",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "your-api-key-here",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://hackathon.api.qloo.com/v2/insights/?filter.type=urn:entity:nightlife&signal.entity=INOX Phoenix Market City (formerly Jazz Cinemas), Velachery, Chennai",
+          "protocol": "https",
+          "host": ["hackathon", "api", "qloo", "com"],
+          "path": ["v2", "insights", ""],
+          "query": [
+            {
+              "key": "filter.type",
+              "value": "urn:entity:nightlife"
+            },
+            {
+              "key": "signal.entity",
+              "value": "INOX Phoenix Market City (formerly Jazz Cinemas), Velachery, Chennai"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Destinations - With Theatre Signal",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "your-api-key-here",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://hackathon.api.qloo.com/v2/insights/?filter.type=urn:entity:destination&signal.entity=INOX Phoenix Market City (formerly Jazz Cinemas), Velachery, Chennai",
+          "protocol": "https",
+          "host": ["hackathon", "api", "qloo", "com"],
+          "path": ["v2", "insights", ""],
+          "query": [
+            {
+              "key": "filter.type",
+              "value": "urn:entity:destination"
+            },
+            {
+              "key": "signal.entity",
+              "value": "INOX Phoenix Market City (formerly Jazz Cinemas), Velachery, Chennai"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Music - With Movie Signal",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "your-api-key-here",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://hackathon.api.qloo.com/v2/insights/?filter.type=urn:entity:music&signal.entity=M3GAN 2.0",
+          "protocol": "https",
+          "host": ["hackathon", "api", "qloo", "com"],
+          "path": ["v2", "insights", ""],
+          "query": [
+            {
+              "key": "filter.type",
+              "value": "urn:entity:music"
+            },
+            {
+              "key": "signal.entity",
+              "value": "M3GAN 2.0"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Places - Train Stations",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "your-api-key-here",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://hackathon.api.qloo.com/v2/insights/?filter.type=urn:entity:place&signal.entity=KSNG SBP train route",
+          "protocol": "https",
+          "host": ["hackathon", "api", "qloo", "com"],
+          "path": ["v2", "insights", ""],
+          "query": [
+            {
+              "key": "filter.type",
+              "value": "urn:entity:place"
+            },
+            {
+              "key": "signal.entity",
+              "value": "KSNG SBP train route"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://hackathon.api.qloo.com",
+      "type": "string"
+    },
+    {
+      "key": "api_key",
+      "value": "your-api-key-here",
+      "type": "string"
+    }
+  ]
+} 

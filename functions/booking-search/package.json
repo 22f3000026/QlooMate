@@ -1,0 +1,14 @@
+{
+  "name": "booking-email-monitor",
+  "version": "1.0.0",
+  "description": "Appwrite function to monitor Gmail for booking emails",
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "node-appwrite": "13.0.1",
+    "googleapis": "128.0.0"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+} 
