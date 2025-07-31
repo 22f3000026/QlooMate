@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { getUser, logoutUser, getUserGmailPreferences, getUserTelegramPreferences, updateUserTelegramPreferences } from '../../lib/auth';
 import { fetchEmails, searchBookingInGmail, searchLatestBookingTickets, connectGmail, checkGmailConnection, disconnectGmail, updateUserPreferences } from '../../lib/gmail';
 import { client, functions } from '../../lib/appwrite';
+import { encodeChatId, decodeChatId, getDisplayChatId } from '../../lib/utils';
 import EmailPopup from '../../components/EmailPopup';
 import SummaryPopup from '../../components/SummaryPopup';
 import TelegramPopup from '../../components/TelegramPopup';
@@ -322,8 +323,10 @@ function DashboardContent() {
 
   const handleSaveTelegramChatId = async (chatId) => {
     try {
-      await updateUserTelegramPreferences(chatId);
-      setTelegramChatId(chatId);
+      // Encode the chat ID before saving
+      const encodedChatId = encodeChatId(chatId);
+      await updateUserTelegramPreferences(encodedChatId);
+      setTelegramChatId(encodedChatId);
       
       // Refresh user preferences display
       const gmailPreferences = await getUserGmailPreferences();
@@ -544,10 +547,12 @@ function DashboardContent() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">Q</span>
-              </div>
-                              <h1 className="text-lg font-semibold text-gray-900">Qloo Mate</h1>
+              <img 
+                src="/qloo.jpg" 
+                alt="Qloo Logo" 
+                className="h-8 w-8 rounded-lg object-cover"
+              />
+              <h1 className="text-lg font-semibold text-gray-900">Qloo Mate</h1>
             </div>
             
             <div className="flex items-center space-x-4">
@@ -768,7 +773,7 @@ function DashboardContent() {
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-600">Chat ID:</span>
                         <span className="text-xs text-gray-900 font-mono">
-                          {userPreferences.telegramChatId}
+                          {getDisplayChatId(userPreferences.telegramChatId)}
                         </span>
                       </div>
                     )}

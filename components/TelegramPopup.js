@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { decodeChatId, getDisplayChatId } from '../lib/utils';
 
 export default function TelegramPopup({ isOpen, onClose, onSave, currentChatId = '' }) {
   const [chatId, setChatId] = useState(currentChatId);
@@ -7,7 +8,9 @@ export default function TelegramPopup({ isOpen, onClose, onSave, currentChatId =
   const [step1Completed, setStep1Completed] = useState(false);
 
   useEffect(() => {
-    setChatId(currentChatId);
+    // Decode the chat ID if it's encoded for display in the input field
+    const decodedChatId = decodeChatId(currentChatId);
+    setChatId(decodedChatId);
   }, [currentChatId]);
 
   useEffect(() => {

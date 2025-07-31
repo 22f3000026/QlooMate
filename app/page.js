@@ -51,9 +51,11 @@ export default function Home() {
       <div className="max-w-md w-full">
         {/* Logo and Brand */}
         <div className="text-center mb-8">
-          <div className="h-16 w-16 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-2xl">Q</span>
-          </div>
+          <img 
+            src="/qloo.jpg" 
+            alt="Qloo Logo" 
+            className="h-16 w-16 rounded-xl object-cover mx-auto mb-4"
+          />
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
             Welcome to Qloo Hack
           </h1>

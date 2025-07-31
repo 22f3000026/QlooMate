@@ -90,33 +90,37 @@ export default function ExecuteMailsPopup({ isOpen, onClose }) {
         
         // Check for new messages only after initial load is complete
         if (initialLoadComplete) {
-          const currentMessageIds = new Set(displayMessages.map(msg => msg.id));
-          const previousMessageIds = new Set(messages.map(msg => msg.id));
-          const newMessageIds = new Set();
-          
-          // Find messages that weren't in the previous list
-          displayMessages.forEach(msg => {
-            if (!previousMessageIds.has(msg.id)) {
-              newMessageIds.add(msg.id);
-            }
-          });
-          
-          // Add new messages to the newMessages set
-          if (newMessageIds.size > 0) {
-            setNewMessages(prev => new Set([...prev, ...newMessageIds]));
+          setMessages(prevMessages => {
+            const currentMessageIds = new Set(displayMessages.map(msg => msg.id));
+            const previousMessageIds = new Set(prevMessages.map(msg => msg.id));
+            const newMessageIds = new Set();
             
-            // Remove the "new" status after 10 seconds
-            setTimeout(() => {
-              setNewMessages(prev => {
-                const updated = new Set(prev);
-                newMessageIds.forEach(id => updated.delete(id));
-                return updated;
-              });
-            }, 10000);
-          }
+            // Find messages that weren't in the previous list
+            displayMessages.forEach(msg => {
+              if (!previousMessageIds.has(msg.id)) {
+                newMessageIds.add(msg.id);
+              }
+            });
+            
+            // Add new messages to the newMessages set
+            if (newMessageIds.size > 0) {
+              setNewMessages(prev => new Set([...prev, ...newMessageIds]));
+              
+              // Remove the "new" status after 10 seconds
+              setTimeout(() => {
+                setNewMessages(prev => {
+                  const updated = new Set(prev);
+                  newMessageIds.forEach(id => updated.delete(id));
+                  return updated;
+                });
+              }, 10000);
+            }
+            
+            return displayMessages;
+          });
+        } else {
+          setMessages(displayMessages);
         }
-        
-        setMessages(displayMessages);
         
         // Mark initial load as complete after first successful fetch
         if (!initialLoadComplete) {
@@ -134,7 +138,7 @@ export default function ExecuteMailsPopup({ isOpen, onClose }) {
     } finally {
       setLoadingMessages(false);
     }
-  }, [userId, initialLoadComplete, messages]);
+  }, [userId, initialLoadComplete]);
 
   // Fetch messages when user is available
   useEffect(() => {

@@ -40,7 +40,22 @@ export default async ({ req, res, log, error }) => {
       // Get user details to find Telegram chat ID from preferences
       const user = await users.get(userId);
       const userPrefs = user.prefs || {};
-      const telegramChatId = userPrefs.telegramChatId;
+      let telegramChatId = userPrefs.telegramChatId;
+      
+      // Decode the chat ID if it's encoded
+      if (telegramChatId && telegramChatId.startsWith('TG_')) {
+        try {
+          const match = telegramChatId.match(/^TG_(.+)_[a-z0-9]+$/);
+          if (match) {
+            const base64Part = match[1];
+            telegramChatId = Buffer.from(base64Part, 'base64').toString();
+            log('Decoded Telegram chat ID from encoded format');
+          }
+        } catch (decodeError) {
+          log('Error decoding Telegram chat ID:', decodeError.message);
+          // Continue with the original chat ID if decoding fails
+        }
+      }
       
       // Save message to Appwrite database first
       const databaseResult = await saveMessageToDatabase(
