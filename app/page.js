@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import GoogleSignIn from "../components/GoogleSignIn";
+import FastLoginPopup from "../components/FastLoginPopup";
 import { getUser } from "../lib/auth";
 
 export default function Home() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showFastLogin, setShowFastLogin] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -28,6 +30,10 @@ export default function Home() {
     };
     checkUser();
   }, [router]);
+
+  const handleFastLoginSuccess = () => {
+    router.push('/dashboard');
+  };
 
   if (loading) {
     return (
@@ -57,8 +63,26 @@ export default function Home() {
         </div>
 
         {/* Sign In Card */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
+        <div className="bg-white rounded-xl p-6 shadow-sm space-y-4">
           <GoogleSignIn />
+          
+          {/* Divider */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">or</span>
+            </div>
+          </div>
+
+          {/* Fast Login Button */}
+          <button
+            onClick={() => setShowFastLogin(true)}
+            className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium"
+          >
+            Fast Login
+          </button>
         </div>
 
         {/* Links */}
@@ -83,6 +107,13 @@ export default function Home() {
             OAuth Setup Guide
           </a>
         </div>
+
+        {/* Fast Login Popup */}
+        <FastLoginPopup
+          isOpen={showFastLogin}
+          onClose={() => setShowFastLogin(false)}
+          onSuccess={handleFastLoginSuccess}
+        />
       </div>
     </div>
   );

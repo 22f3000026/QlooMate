@@ -5,11 +5,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { getUser, logoutUser, getUserGmailPreferences, getUserTelegramPreferences, updateUserTelegramPreferences } from '../../lib/auth';
 import { fetchEmails, searchBookingInGmail, searchLatestBookingTickets, connectGmail, checkGmailConnection, disconnectGmail, updateUserPreferences } from '../../lib/gmail';
 import { client, functions } from '../../lib/appwrite';
-import EmailList from '../../components/EmailList';
 import EmailPopup from '../../components/EmailPopup';
 import SummaryPopup from '../../components/SummaryPopup';
 import TelegramPopup from '../../components/TelegramPopup';
-import UserMessages from '../../components/UserMessages';
+import FloatingChatButton from '../../components/FloatingChatButton';
 import { Functions } from 'appwrite';
 
 export default function Dashboard() {
@@ -594,26 +593,6 @@ export default function Dashboard() {
           >
             Mate
           </button>
-          <button
-            onClick={() => setActiveTab('mails')}
-            className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
-              activeTab === 'mails'
-                ? 'bg-blue-100 text-blue-700'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
-          >
-            Emails
-          </button>
-          <button
-            onClick={() => setActiveTab('admin')}
-            className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
-              activeTab === 'admin'
-                ? 'bg-blue-100 text-blue-700'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
-          >
-            Admin
-          </button>
         </div>
 
         {/* Content */}
@@ -680,78 +659,135 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Gmail Preferences Status */}
-            {userPreferences && (
+            {/* Integration Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Gmail Integration Card */}
               <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Gmail Integration Status</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Integration Active:</span>
-                    <span className={`text-sm font-medium ${userPreferences.isActive ? 'text-green-600' : 'text-red-600'}`}>
-                      {userPreferences.isActive ? 'Yes' : 'No'}
-                    </span>
-                  </div>
-                  {userPreferences.lastEmailCheckTime && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Last Email Check:</span>
-                      <span className="text-sm text-gray-900">
-                        {new Date(userPreferences.lastEmailCheckTime).toLocaleString()}
-                      </span>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-medium text-gray-900">Gmail Integration</h3>
+                  {gmailConnected && (
+                    <div className="flex items-center space-x-2 px-2 py-1 bg-green-100 text-green-800 rounded-full">
+                      <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                      <span className="text-xs font-medium">Connected</span>
                     </div>
                   )}
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Refresh Token:</span>
-                    <span className={`text-sm font-medium ${userPreferences.gmailRefreshToken ? 'text-green-600' : 'text-red-600'}`}>
-                      {userPreferences.gmailRefreshToken ? '✓ Available' : '✗ Not Available'}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Connection Status:</span>
-                    <span className={`text-sm font-medium ${gmailConnected ? 'text-green-600' : 'text-red-600'}`}>
-                      {gmailConnected ? 'Connected - Gmail Integration' : 'Not Connected'}
-                    </span>
-                  </div>
                 </div>
+                
+                {!gmailConnected ? (
+                  <div className="space-y-4">
+                    <p className="text-sm text-gray-600">Connect your Gmail account to access emails</p>
+                    <button
+                      onClick={handleConnectGmail}
+                      disabled={gmailConnecting}
+                      className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${
+                        gmailConnecting
+                          ? 'bg-gray-300 cursor-not-allowed'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      }`}
+                    >
+                      {gmailConnecting ? (
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Connecting...
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center">
+                          <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                          </svg>
+                          Connect Gmail
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">Status:</span>
+                        <span className="text-sm font-medium text-green-600">Connected - Gmail Integration</span>
+                      </div>
+                      {userPreferences?.lastEmailCheckTime && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600">Last Check:</span>
+                          <span className="text-xs text-gray-900">
+                            {new Date(userPreferences.lastEmailCheckTime).toLocaleString()}
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">Refresh Token:</span>
+                        <span className="text-xs text-gray-900 font-mono">
+                          {userPreferences?.gmailRefreshToken ? '✓ Available' : '✗ Not Available'}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleDisconnectGmail}
+                      disabled={gmailDisconnecting}
+                      className={`w-full px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                        gmailDisconnecting
+                          ? 'bg-gray-300 cursor-not-allowed text-gray-500'
+                          : 'bg-red-100 hover:bg-red-200 text-red-700'
+                      }`}
+                    >
+                      {gmailDisconnecting ? (
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-red-600 mr-1"></div>
+                          Disconnecting...
+                        </div>
+                      ) : (
+                        'Disconnect Gmail'
+                      )}
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
 
-            {/* Telegram Integration Status */}
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Telegram Integration Status</h3>
-                <button
-                  onClick={handleOpenTelegramPopup}
-                  className="flex items-center px-3 py-1 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
-                >
-                  <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                  {userPreferences?.telegramChatId ? 'Edit Chat ID' : 'Connect Telegram'}
-                </button>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Telegram Connected:</span>
-                  <span className={`text-sm font-medium ${userPreferences?.telegramConnected ? 'text-green-600' : 'text-red-600'}`}>
-                    {userPreferences?.telegramConnected ? 'Yes' : 'No'}
-                  </span>
+              {/* Telegram Integration Card */}
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-medium text-gray-900">Telegram Integration</h3>
+                  {userPreferences?.telegramConnected && (
+                    <div className="flex items-center space-x-2 px-2 py-1 bg-green-100 text-green-800 rounded-full">
+                      <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                      <span className="text-xs font-medium">Connected</span>
+                    </div>
+                  )}
                 </div>
-                {userPreferences?.telegramChatId && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Chat ID:</span>
-                    <span className="text-sm text-gray-900 font-mono">
-                      {userPreferences.telegramChatId}
-                    </span>
+                
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Status:</span>
+                      <span className={`text-sm font-medium ${userPreferences?.telegramConnected ? 'text-green-600' : 'text-red-600'}`}>
+                        {userPreferences?.telegramConnected ? 'Active' : 'Not Connected'}
+                      </span>
+                    </div>
+                    {userPreferences?.telegramChatId && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">Chat ID:</span>
+                        <span className="text-xs text-gray-900 font-mono">
+                          {userPreferences.telegramChatId}
+                        </span>
+                      </div>
+                    )}
+                    {userPreferences?.telegramConnectedAt && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">Connected:</span>
+                        <span className="text-xs text-gray-900">
+                          {new Date(userPreferences.telegramConnectedAt).toLocaleString()}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                )}
-                {userPreferences?.telegramConnectedAt && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Connected At:</span>
-                    <span className="text-sm text-gray-900">
-                      {new Date(userPreferences.telegramConnectedAt).toLocaleString()}
-                    </span>
-                  </div>
-                )}
+                  <button
+                    onClick={handleOpenTelegramPopup}
+                    className="w-full px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                  >
+                    {userPreferences?.telegramChatId ? 'Edit Chat ID' : 'Connect Telegram'}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1163,389 +1199,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {activeTab === 'mails' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - Integration Status */}
-            <div className="lg:col-span-1 space-y-6">
-              {/* Gmail Integration Status */}
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-medium text-gray-900">Gmail Integration</h3>
-                  {gmailConnected && (
-                    <div className="flex items-center space-x-2 px-2 py-1 bg-green-100 text-green-800 rounded-full">
-                      <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                      <span className="text-xs font-medium">Connected</span>
-                    </div>
-                  )}
-                </div>
-                
-                {!gmailConnected ? (
-                  <div className="space-y-4">
-                    <p className="text-sm text-gray-600">Connect your Gmail account to access emails</p>
-                    <button
-                      onClick={handleConnectGmail}
-                      disabled={gmailConnecting}
-                      className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${
-                        gmailConnecting
-                          ? 'bg-gray-300 cursor-not-allowed'
-                          : 'bg-blue-600 hover:bg-blue-700 text-white'
-                      }`}
-                    >
-                      {gmailConnecting ? (
-                        <div className="flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                          Connecting...
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-center">
-                          <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                          </svg>
-                          Connect Gmail
-                        </div>
-                      )}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Status:</span>
-                        <span className="text-sm font-medium text-green-600">Connected - Gmail Integration</span>
-                      </div>
-                      {userPreferences?.lastEmailCheckTime && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Last Check:</span>
-                          <span className="text-xs text-gray-900">
-                            {new Date(userPreferences.lastEmailCheckTime).toLocaleString()}
-                          </span>
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Refresh Token:</span>
-                        <span className="text-xs text-gray-900 font-mono">
-                          {userPreferences?.gmailRefreshToken ? '✓ Available' : '✗ Not Available'}
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={handleDisconnectGmail}
-                      disabled={gmailDisconnecting}
-                      className={`w-full px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                        gmailDisconnecting
-                          ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-                          : 'bg-red-100 hover:bg-red-200 text-red-700'
-                      }`}
-                    >
-                      {gmailDisconnecting ? (
-                        <div className="flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-red-600 mr-1"></div>
-                          Disconnecting...
-                        </div>
-                      ) : (
-                        'Disconnect Gmail'
-                      )}
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* Telegram Integration Status */}
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-medium text-gray-900">Telegram Integration</h3>
-                  {userPreferences?.telegramConnected && (
-                    <div className="flex items-center space-x-2 px-2 py-1 bg-green-100 text-green-800 rounded-full">
-                      <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                      <span className="text-xs font-medium">Connected</span>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Status:</span>
-                      <span className={`text-sm font-medium ${userPreferences?.telegramConnected ? 'text-green-600' : 'text-red-600'}`}>
-                        {userPreferences?.telegramConnected ? 'Active' : 'Not Connected'}
-                      </span>
-                    </div>
-                    {userPreferences?.telegramChatId && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Chat ID:</span>
-                        <span className="text-xs text-gray-900 font-mono">
-                          {userPreferences.telegramChatId}
-                        </span>
-                      </div>
-                    )}
-                    {userPreferences?.telegramConnectedAt && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Connected:</span>
-                        <span className="text-xs text-gray-900">
-                          {new Date(userPreferences.telegramConnectedAt).toLocaleString()}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    onClick={handleOpenTelegramPopup}
-                    className="w-full px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
-                  >
-                    {userPreferences?.telegramChatId ? 'Edit Chat ID' : 'Connect Telegram'}
-                  </button>
-              </div>
-            </div>
-
-
-                        </div>
-
-            {/* Right Column - Messages Area */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* User Messages Component */}
-              <UserMessages 
-                userId={user?.$id} 
-                refreshTrigger={refreshMessages}
-                emails={emails}
-                emailsLoading={emailsLoading}
-                emailsError={emailsError}
-                onEmailClick={handleEmailClick}
-                onFetchMail={handleFetchMail}
-                onSearchBooking={handleSearchBooking}
-                onQuickSummary={handleQuickSummary}
-                gmailConnected={gmailConnected}
-                showSearchFilter={showSearchFilter}
-              />
-
-
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'admin' && (
-          <div className="space-y-6">
-            {/* Admin Header */}
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                Admin Panel
-              </h2>
-              <p className="text-gray-600">
-                Manage system operations and execute automated processes.
-              </p>
-            </div>
-
-            {/* Two Column Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Left Column - QlooMate Execution */}
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-medium text-gray-900">QlooMate Automation</h3>
-                  <div className="flex items-center space-x-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    <span className="text-xs font-medium">Manual</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h4 className="text-sm font-medium text-gray-900 mb-3">What QlooMate Does:</h4>
-                    <div className="space-y-2 text-sm text-gray-600">
-                      <div className="flex items-start space-x-2">
-                        <div className="h-1.5 w-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <span>Reads your Gmail inbox for booking-related emails</span>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <div className="h-1.5 w-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <span>Extracts booking information and travel details</span>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <div className="h-1.5 w-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <span>Queries the Qloo API for relevant recommendations</span>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <div className="h-1.5 w-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <span>Sends personalized results directly to your Telegram</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <div className="flex items-start space-x-2">
-                      <svg className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                      </svg>
-                      <div>
-                        <h4 className="text-sm font-medium text-yellow-800 mb-1">Requirements:</h4>
-                        <p className="text-sm text-yellow-700">
-                          Make sure you have connected both Gmail and Telegram before executing QlooMate.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={handleExecuteQlooMate}
-                    disabled={qlooMateExecuting || !gmailConnected || !userPreferences?.telegramConnected}
-                    className={`w-full px-6 py-3 rounded-lg font-medium transition-colors ${
-                      qlooMateExecuting || !gmailConnected || !userPreferences?.telegramConnected
-                        ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-                        : 'bg-orange-600 hover:bg-orange-700 text-white'
-                    }`}
-                  >
-                    {qlooMateExecuting ? (
-                      <div className="flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                        <span>Executing QlooMate...</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center">
-                        <svg className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <span>Execute QlooMate</span>
-                      </div>
-                    )}
-                  </button>
-
-                  {(!gmailConnected || !userPreferences?.telegramConnected) && (
-                    <div className="text-xs text-gray-500 text-center">
-                      {!gmailConnected && !userPreferences?.telegramConnected && 
-                        "Connect Gmail and Telegram to enable QlooMate"}
-                      {!gmailConnected && userPreferences?.telegramConnected && 
-                        "Connect Gmail to enable QlooMate"}
-                      {gmailConnected && !userPreferences?.telegramConnected && 
-                        "Connect Telegram to enable QlooMate"}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Right Column - QlooMate Beat */}
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-medium text-gray-900">QlooMate Beat</h3>
-                  <div className="flex items-center space-x-2 px-3 py-1 bg-green-100 text-green-800 rounded-full">
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-xs font-medium">Scheduled</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h4 className="text-sm font-medium text-gray-900 mb-3">Automated Execution:</h4>
-                                         <div className="space-y-2 text-sm text-gray-600">
-                       <div className="flex items-start space-x-2">
-                         <div className="h-1.5 w-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                         <span>Schedules QlooMate execution every 5 minutes</span>
-                       </div>
-                       <div className="flex items-start space-x-2">
-                         <div className="h-1.5 w-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                         <span>Continuously monitors your emails for new bookings</span>
-                       </div>
-                       <div className="flex items-start space-x-2">
-                         <div className="h-1.5 w-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                         <span>Sends real-time recommendations to Telegram</span>
-                       </div>
-                       <div className="flex items-start space-x-2">
-                         <div className="h-1.5 w-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                         <span>Uses Appwrite's scheduled execution feature</span>
-                       </div>
-                     </div>
-                  </div>
-
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="flex items-start space-x-2">
-                      <svg className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <div>
-                        <h4 className="text-sm font-medium text-blue-800 mb-1">Current Status:</h4>
-                        <p className="text-sm text-blue-700">
-                          {qlooMateBeatActive ? 'QlooMate Beat is currently running every 5 minutes' : 'QlooMate Beat is currently stopped'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <button
-                      onClick={handleStartQlooMateBeat}
-                      className="w-full px-6 py-3 rounded-lg font-medium transition-colors bg-green-600 hover:bg-green-700 text-white"
-                    >
-                      <div className="flex items-center justify-center">
-                        <svg className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>Start QlooMate Beat</span>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={handleStopQlooMateBeat}
-                      className="w-full px-6 py-3 rounded-lg font-medium transition-colors bg-red-600 hover:bg-red-700 text-white"
-                    >
-                      <div className="flex items-center justify-center">
-                        <svg className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z M9 10l2 2 4-4" />
-                        </svg>
-                        <span>Stop QlooMate Beat</span>
-                      </div>
-                    </button>
-
-                    <div className="text-xs text-gray-500 text-center">
-                      QlooMate Beat functionality is currently disabled
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* System Status Card */}
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">System Status</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Gmail Integration:</span>
-                  <div className="flex items-center space-x-2">
-                    <div className={`h-2 w-2 rounded-full ${gmailConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                    <span className={`text-sm font-medium ${gmailConnected ? 'text-green-600' : 'text-red-600'}`}>
-                      {gmailConnected ? 'Connected' : 'Not Connected'}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Telegram Integration:</span>
-                  <div className="flex items-center space-x-2">
-                    <div className={`h-2 w-2 rounded-full ${userPreferences?.telegramConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                    <span className={`text-sm font-medium ${userPreferences?.telegramConnected ? 'text-green-600' : 'text-red-600'}`}>
-                      {userPreferences?.telegramConnected ? 'Connected' : 'Not Connected'}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">QlooMate Beat:</span>
-                  <div className="flex items-center space-x-2">
-                    <div className="h-2 w-2 rounded-full bg-gray-500"></div>
-                    <span className="text-sm font-medium text-gray-600">
-                      Disabled
-                    </span>
-                  </div>
-                </div>
-                {userPreferences?.lastEmailCheckTime && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Last Email Check:</span>
-                    <span className="text-sm text-gray-900">
-                      {new Date(userPreferences.lastEmailCheckTime).toLocaleString()}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Email Popup */}
@@ -1584,6 +1237,9 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* Floating Chat Button - Only visible in Mate tab */}
+      <FloatingChatButton activeTab={activeTab} />
     </div>
   );
 } 

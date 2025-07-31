@@ -42,17 +42,7 @@ export default async ({ req, res, log, error }) => {
       const userPrefs = user.prefs || {};
       const telegramChatId = userPrefs.telegramChatId;
       
-      if (!telegramChatId) {
-        log('No Telegram chat ID found in user preferences');
-        return res.json({
-          success: false,
-          error: 'No Telegram chat ID found in user preferences'
-        });
-      }
-
-      log(`Found Telegram chat ID: ${telegramChatId}`);
-
-      // Save message to Appwrite database
+      // Save message to Appwrite database first
       const databaseResult = await saveMessageToDatabase(
         databases, 
         userId, 
@@ -70,6 +60,20 @@ export default async ({ req, res, log, error }) => {
       }
 
       log('Message saved to database successfully');
+
+      // Check if Telegram chat ID exists
+      if (!telegramChatId) {
+        log('No Telegram chat ID found in user preferences - message saved to database only');
+        return res.json({
+          success: true,
+          message: 'Message saved to database (no Telegram chat ID found)',
+          databaseResult,
+          telegramResult: { success: false, error: 'No Telegram chat ID configured' },
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      log(`Found Telegram chat ID: ${telegramChatId}`);
 
       // Send message via Telegram Bot
       const telegramResult = await sendTelegramMessage(telegramChatId, userMessage, log);

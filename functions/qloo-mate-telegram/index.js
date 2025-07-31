@@ -18,6 +18,8 @@ export default async ({ req, res, log, error }) => {
   const databases = new Databases(client);
 
   try {
+    log(`Function called with path: ${req.path}, method: ${req.method}`);
+    
     // Handle Telegram webhook
     if (req.path === "/webhook") {
       return await handleTelegramWebhook(req, res, log, error, databases);
@@ -33,12 +35,24 @@ export default async ({ req, res, log, error }) => {
       return await handleOpenAIChat(req, res, log, error);
     }
 
+    // Handle test chatbot requests from website
+    if (req.path === "/test-chat") {
+      return await handleTestChat(req, res, log, error);
+    }
+
+    // Default response - route to test chat if no specific path or root path
+    if (!req.path || req.path === "/" || req.path === "") {
+      log(`Routing to test chat handler for path: ${req.path}`);
+      return await handleTestChat(req, res, log, error);
+    }
+
     // Default response
     return res.json({
       motto: "Qloo Mate - AI-powered conversation assistant",
       endpoints: {
         webhook: "/webhook - Telegram webhook endpoint",
         chat: "/chat - Direct OpenAI chat endpoint",
+        testChat: "/test-chat - Test chatbot endpoint for website",
         ping: "/ping - Health check"
       },
       learn: "https://appwrite.io/docs",
@@ -548,4 +562,82 @@ async function handleOpenAIChat(req, res, log, error) {
     error("Chat error: " + err.message);
     return res.json({ error: "Chat processing failed" }, 500);
   }
-} 
+}
+
+// Handle test chatbot requests from website
+async function handleTestChat(req, res, log, error) {
+  try {
+    log(`Test chat request body: ${JSON.stringify(req.body)}`);
+    log(`Test chat request body type: ${typeof req.body}`);
+    log(`Test chat request method: ${req.method}`);
+    log(`Test chat request path: ${req.path}`);
+    log(`Test chat request headers: ${JSON.stringify(req.headers)}`);
+    
+    // Handle different possible data structures
+    let message;
+    if (typeof req.body === 'string') {
+      message = req.body;
+      log(`Message extracted from string: ${message}`);
+    } else if (req.body && req.body.message) {
+      message = req.body.message;
+      log(`Message extracted from req.body.message: ${message}`);
+    } else if (req.body && typeof req.body === 'object') {
+      // Try to extract message from object
+      message = req.body.message || req.body.text || req.body.content || JSON.stringify(req.body);
+      log(`Message extracted from object: ${message}`);
+    } else {
+      message = req.body;
+      log(`Message extracted from req.body directly: ${message}`);
+    }
+
+    log(`Final extracted message: ${message}`);
+    log(`Message type: ${typeof message}`);
+    log(`Message length: ${message ? message.length : 0}`);
+
+    if (!message || message.trim() === '') {
+      log(`Message validation failed - message is empty or falsy`);
+      return res.json({ error: "Message is required" }, 400);
+    }
+
+    log(`Test chat request received: ${message}`);
+
+    // Analyze user intent to determine if it's a taste-based request
+    const intent = await analyzeUserIntent(message, log);
+    
+    let aiResponse;
+    let suggestions = [];
+    
+    if (intent.isTasteBased) {
+      // Route to qloo-taste function for taste-based recommendations
+      log(`Test chat request is taste-based. Routing to qloo-taste function.`);
+      const tasteResponse = await getTasteBasedRecommendations(message, log);
+      aiResponse = tasteResponse;
+    } else {
+      // Handle as basic conversation
+      log(`Test chat request is basic conversation. Using standard AI response.`);
+      aiResponse = await generateAIResponse(message, [], log);
+    }
+
+    return res.json({
+      success: true,
+      response: {
+        text: aiResponse,
+        suggestions: [] // Don't show suggestions
+      },
+      timestamp: new Date().toISOString(),
+    });
+
+  } catch (err) {
+    error("Test chat error: " + err.message);
+    return res.json({ 
+      success: false,
+      error: "Test chat processing failed",
+      response: {
+        text: "I'm sorry, I'm having trouble processing your request right now. Please try again later.",
+        suggestions: ["Restaurants", "Movies", "Books", "Travel", "Music"]
+      }
+    }, 500);
+  }
+}
+
+ 
