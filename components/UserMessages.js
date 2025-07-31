@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { client, databases } from '../lib/appwrite';
 
 export default function UserMessages({ userId, refreshTrigger, emails, emailsLoading, emailsError, onEmailClick, onFetchMail, onSearchBooking, onQuickSummary, gmailConnected, showSearchFilter }) {
@@ -11,13 +11,7 @@ export default function UserMessages({ userId, refreshTrigger, emails, emailsLoa
   const [telegramRefreshing, setTelegramRefreshing] = useState(false);
   const [previousMessageCount, setPreviousMessageCount] = useState(0);
 
-  useEffect(() => {
-    if (userId) {
-      fetchUserMessages();
-    }
-  }, [userId, refreshTrigger, fetchUserMessages]);
-
-  const fetchUserMessages = async (isRefresh = false) => {
+  const fetchUserMessages = useCallback(async (isRefresh = false) => {
     try {
       if (!isRefresh) {
         setLoading(true);
@@ -61,7 +55,13 @@ export default function UserMessages({ userId, refreshTrigger, emails, emailsLoa
         setLoading(false);
       }
     }
-  };
+  }, [userId, previousMessageCount]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchUserMessages();
+    }
+  }, [userId, refreshTrigger, fetchUserMessages]);
 
   const handleMessageClick = (message) => {
     setSelectedMessage(message);

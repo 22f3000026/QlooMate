@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { functions, databases } from '../lib/appwrite';
 import { getUser } from '../lib/auth';
 
@@ -54,13 +54,6 @@ export default function ExecuteMailsPopup({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
-  // Fetch messages when user is available
-  useEffect(() => {
-    if (userId) {
-      fetchUserMessages();
-    }
-  }, [userId, fetchUserMessages]);
-
   const getCurrentUser = async () => {
     try {
       const user = await getUser();
@@ -72,7 +65,7 @@ export default function ExecuteMailsPopup({ isOpen, onClose }) {
     }
   };
 
-  const fetchUserMessages = async () => {
+  const fetchUserMessages = useCallback(async () => {
     if (!userId) return;
     
     try {
@@ -141,7 +134,14 @@ export default function ExecuteMailsPopup({ isOpen, onClose }) {
     } finally {
       setLoadingMessages(false);
     }
-  };
+  }, [userId, initialLoadComplete, messages]);
+
+  // Fetch messages when user is available
+  useEffect(() => {
+    if (userId) {
+      fetchUserMessages();
+    }
+  }, [userId, fetchUserMessages]);
 
   const scrollToBottom = () => {
     logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });

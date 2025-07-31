@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import React from 'react';
 
 export default function QlooTestPage() {
@@ -275,7 +275,7 @@ export default function QlooTestPage() {
   ];
 
   // Generate URL function
-  const generateUrl = () => {
+  const generateUrl = useCallback(() => {
     const baseUrl = 'https://hackathon.api.qloo.com';
     let url = '';
     const params = new URLSearchParams();
@@ -367,7 +367,7 @@ export default function QlooTestPage() {
     const queryString = params.toString();
     const finalUrl = queryString ? `${url}?${queryString}` : url;
     setGeneratedUrl(finalUrl);
-  };
+  }, [selectedEndpoint, query, entityType, filterType, signalParam, signalValue, take]);
 
   // Get display URL (raw format)
   const getDisplayUrl = () => {
