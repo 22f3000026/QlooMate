@@ -102,6 +102,6 @@ Connect your Gmail, set up Telegram, and start receiving personalized recommenda
 
 <div align="center">
 
-**Made with ❤️ by the QlooMate Team**
+**Made for Qloo LLM Hackathon**
 
 </div> 
