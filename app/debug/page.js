@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { account, client } from '../../lib/appwrite';
 import { getUser } from '../../lib/auth';
 
@@ -88,12 +89,12 @@ export default function DebugPage() {
         </div>
 
         <div className="mt-6 text-center">
-          <a
+          <Link
             href="/"
             className="text-blue-600 hover:text-blue-800 text-sm"
           >
             ← Back to Home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -488,7 +488,7 @@ export default function QlooTestPage() {
   // Auto-generate URL whenever any parameter changes
   React.useEffect(() => {
     generateUrl();
-  }, [selectedEndpoint, query, entityType, filterType, signalParam, signalValue, take]);
+  }, [selectedEndpoint, query, entityType, filterType, signalParam, signalValue, take, generateUrl]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -496,7 +496,7 @@ export default function QlooTestPage() {
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Qloo API Testing</h1>
           <p className="text-gray-600 mb-6">
-            Test Qloo's Search, Insights, and other APIs with dynamic URL generation
+            Test Qloo&apos;s Search, Insights, and other APIs with dynamic URL generation
           </p>
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
@@ -514,7 +514,7 @@ export default function QlooTestPage() {
             <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded">
               <p className="text-green-800 text-sm font-medium">💡 Quick Start:</p>
               <p className="text-green-700 text-sm">
-                Try the "Popular Tourist Destinations in Chennai" example below to get location-based destination recommendations using Qloo's cultural intelligence!
+                Try the &quot;Popular Tourist Destinations in Chennai&quot; example below to get location-based destination recommendations using Qloo&apos;s cultural intelligence!
               </p>
             </div>
           </div>

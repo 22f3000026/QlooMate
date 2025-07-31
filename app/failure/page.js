@@ -15,7 +15,7 @@ export default function FailurePage() {
             </svg>
           </div>
           <h2 className="mt-4 text-xl font-semibold text-gray-900">Authentication Failed</h2>
-          <p className="mt-2 text-gray-600">Sorry, we couldn't authenticate you with Google.</p>
+          <p className="mt-2 text-gray-600">Sorry, we couldn&apos;t authenticate you with Google.</p>
           
           <div className="mt-6 space-y-3">
             <p className="text-sm text-gray-500">
@@ -24,7 +24,7 @@ export default function FailurePage() {
             <ul className="text-sm text-gray-500 text-left list-disc list-inside space-y-1">
               <li>You cancelled the authentication process</li>
               <li>There was an issue with the OAuth configuration</li>
-              <li>Your Google account doesn't have the required permissions</li>
+              <li>Your Google account doesn&apos;t have the required permissions</li>
             </ul>
           </div>
           

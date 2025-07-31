@@ -65,14 +65,14 @@ export default function SummaryPopup({ summaryData, isOpen, onClose }) {
                     </svg>
                   </div>
                   <h3 className="text-lg font-medium text-gray-900 mb-2">No Extractable Booking Details Found</h3>
-                  <p className="text-gray-500 mb-4">
-                    The emails found don't contain supported booking formats (Movie bookings or Train reservations).
-                  </p>
+                                <p className="text-gray-500 mb-4">
+                The emails found don&apos;t contain supported booking formats (Movie bookings or Train reservations).
+              </p>
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
                     <h4 className="text-sm font-medium text-blue-800 mb-2">Supported Formats:</h4>
                     <ul className="text-xs text-blue-700 space-y-1">
-                      <li>• <strong>Movie Bookings:</strong> Emails containing "Booking confirmed" and "screen"</li>
-                      <li>• <strong>Train Reservations:</strong> Emails containing "Electronic Reservation Slip" or "PNR"</li>
+                                      <li>• <strong>Movie Bookings:</strong> Emails containing &quot;Booking confirmed&quot; and &quot;screen&quot;</li>
+                <li>• <strong>Train Reservations:</strong> Emails containing &quot;Electronic Reservation Slip&quot; or &quot;PNR&quot;</li>
                     </ul>
                   </div>
                 </div>

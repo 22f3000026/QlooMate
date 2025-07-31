@@ -48,7 +48,7 @@ export default function EmailList({ emails, loading, error, onEmailClick }) {
             </svg>
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No Emails Found</h3>
-          <p className="text-gray-600 text-sm">Click "Fetch Emails" to load your Gmail messages.</p>
+                        <p className="text-gray-600 text-sm">Click &quot;Fetch Emails&quot; to load your Gmail messages.</p>
         </div>
       </div>
     );

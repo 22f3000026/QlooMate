@@ -204,9 +204,9 @@ export default function TelegramPopup({ isOpen, onClose, onSave, currentChatId =
                 <div className="text-sm text-blue-800">
                   <p className="font-medium mb-1">Complete Setup Process:</p>
                   <ol className="list-decimal list-inside space-y-1 text-blue-700">
-                    <li>Click "Open @QlooMateBot" and send "hello" to enable notifications</li>
-                    <li>Click "Open @userinfobot" and send "hello" to get your chat ID</li>
-                    <li>Copy the chat ID from @userinfobot's reply</li>
+                    <li>Click &quot;Open @QlooMateBot&quot; and send &quot;hello&quot; to enable notifications</li>
+                    <li>Click &quot;Open @userinfobot&quot; and send &quot;hello&quot; to get your chat ID</li>
+                    <li>Copy the chat ID from @userinfobot&apos;s reply</li>
                     <li>Paste the chat ID below and save</li>
                   </ol>
                 </div>

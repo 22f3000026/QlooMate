@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { loginWithGoogle, logoutUser, getUser } from '../../lib/auth';
 
 export default function TestOAuthPage() {
@@ -118,12 +119,12 @@ export default function TestOAuthPage() {
         )}
 
         <div className="mt-6 text-center">
-          <a
+          <Link
             href="/"
             className="text-blue-600 hover:text-blue-800 text-sm"
           >
             ← Back to Home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

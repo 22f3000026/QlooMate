@@ -604,7 +604,7 @@ export default function Dashboard() {
                 Welcome back, {user.name}!
               </h2>
               <p className="text-gray-600 mb-4">
-                You're successfully signed in with Google. Connect your Gmail to start managing your emails.
+                You&apos;re successfully signed in with Google. Connect your Gmail to start managing your emails.
               </p>
               
               <div className="flex items-center space-x-2">
@@ -903,7 +903,7 @@ export default function Dashboard() {
                   </div>
                 )}
               <p className="text-gray-600">
-                Customize what recommendations you'd like to receive from your AI travel companion.
+                Customize what recommendations you&apos;d like to receive from your AI travel companion.
               </p>
               </div>
 

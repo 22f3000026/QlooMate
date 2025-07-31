@@ -59,7 +59,7 @@ export default function ExecuteMailsPopup({ isOpen, onClose }) {
     if (userId) {
       fetchUserMessages();
     }
-  }, [userId]);
+  }, [userId, fetchUserMessages]);
 
   const getCurrentUser = async () => {
     try {
@@ -90,7 +90,7 @@ export default function ExecuteMailsPopup({ isOpen, onClose }) {
            .map((msg, index) => ({
              id: index,
              text: msg.message,
-             sender: 'qloo',
+             sender: msg.sender || 'qloo', // Use sender from database or default to 'qloo'
              timestamp: new Date(msg.timestamp)
            }))
            .reverse(); // Latest messages first
@@ -782,44 +782,58 @@ export default function ExecuteMailsPopup({ isOpen, onClose }) {
                      </div>
                    ) : (
                                            messages.map((message, index) => (
-                        <div
-                          key={message.id}
-                          onClick={() => handleMessageClick(message)}
-                          className={`px-6 py-4 hover:bg-gray-50 transition-all duration-300 cursor-pointer ${
-                            newMessages.has(message.id) 
-                              ? 'bg-blue-50 border-l-4 border-blue-400 shadow-lg animate-pulse' 
-                              : ''
-                          }`}
-                        >
-                         <div className="flex items-start space-x-3">
-                           <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                             <svg className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                             </svg>
-                           </div>
-                           
-                                                       <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between mb-1">
-                                <div className="flex items-center space-x-2">
-                                  <p className="text-sm font-medium text-gray-900">
-                                    QlooMate Recommendation
-                                  </p>
-                                  {newMessages.has(message.id) && (
-                                    <span className="text-xs bg-blue-500 text-white px-2 py-0.5 rounded-full font-medium animate-bounce">
-                                      NEW
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="text-xs text-gray-500 flex-shrink-0 ml-2">
-                                  {message.timestamp.toLocaleString()}
-                                </p>
-                              </div>
-                             
-                                                           <p className="text-sm text-gray-600 line-clamp-2">
-                                {message.text}
-                              </p>
+                                                 <div
+                           key={message.id}
+                           onClick={() => handleMessageClick(message)}
+                           className={`px-6 py-4 hover:bg-gray-50 transition-all duration-300 cursor-pointer ${
+                             newMessages.has(message.id) 
+                               ? message.sender === 'qloo-pref' 
+                                 ? 'bg-green-50 border-l-4 border-green-400 shadow-lg animate-pulse'
+                                 : 'bg-blue-50 border-l-4 border-blue-400 shadow-lg animate-pulse' 
+                               : ''
+                           }`}
+                         >
+                          <div className="flex items-start space-x-3">
+                            <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                              message.sender === 'qloo-pref' 
+                                ? 'bg-green-100' 
+                                : 'bg-blue-100'
+                            }`}>
+                              <svg className={`h-4 w-4 ${
+                                message.sender === 'qloo-pref' 
+                                  ? 'text-green-600' 
+                                  : 'text-blue-600'
+                              }`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                              </svg>
                             </div>
-                          </div>
+                            
+                                                        <div className="flex-1 min-w-0">
+                               <div className="flex items-center justify-between mb-1">
+                                 <div className="flex items-center space-x-2">
+                                   <p className="text-sm font-medium text-gray-900">
+                                     {message.sender === 'qloo-pref' ? 'Qloo-Pref Recommendation' : 'QlooMate Recommendation'}
+                                   </p>
+                                   {newMessages.has(message.id) && (
+                                     <span className={`text-xs text-white px-2 py-0.5 rounded-full font-medium animate-bounce ${
+                                       message.sender === 'qloo-pref' 
+                                         ? 'bg-green-500' 
+                                         : 'bg-blue-500'
+                                     }`}>
+                                       NEW
+                                     </span>
+                                   )}
+                                 </div>
+                                 <p className="text-xs text-gray-500 flex-shrink-0 ml-2">
+                                   {message.timestamp.toLocaleString()}
+                                 </p>
+                               </div>
+                              
+                                                            <p className="text-sm text-gray-600 line-clamp-2">
+                                 {message.text}
+                               </p>
+                             </div>
+                           </div>
                           
                           {/* Expanded Message Content */}
                           {selectedMessage?.id === message.id && (
