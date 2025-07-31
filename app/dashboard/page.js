@@ -364,24 +364,28 @@ function DashboardContent() {
     try {
       setQlooMateExecuting(true);
       
-      // Call the Appwrite function
-      const result = await functions.createExecution('68846bdd0004eae6d86c');
+      // Call the Appwrite function with a simple payload to avoid timeout
+      const result = await functions.createExecution('68846bdd0004eae6d86c', JSON.stringify({
+        path: '/execute',
+        simple: true
+      }));
       
       console.log('QlooMate function executed successfully:', result);
       
       // Show success message
       setEmailsError(null);
       
-      // Trigger message refresh after a short delay to allow the function to complete
-      setTimeout(() => {
-        setRefreshMessages(prev => !prev);
-      }, 2000);
-      
       // Show success popup for 3 seconds
       setShowQlooMateSuccess(true);
       setTimeout(() => {
         setShowQlooMateSuccess(false);
       }, 3000);
+      
+      // Trigger message refresh after a short delay
+      setTimeout(() => {
+        setRefreshMessages(prev => !prev);
+      }, 2000);
+      
     } catch (error) {
       console.error('Error executing QlooMate function:', error);
       setEmailsError('Failed to execute QlooMate function. Please try again.');

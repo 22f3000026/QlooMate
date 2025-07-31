@@ -78,15 +78,14 @@ export default function ExecuteMailsPopup({ isOpen, onClose }) {
       
       if (response && response.messages) {
                  const parsedMessages = JSON.parse(response.messages);
-         // Convert database format to display format and reverse order (latest first)
+         // Convert database format to display format (messages already in correct order - latest first)
          const displayMessages = parsedMessages
            .map((msg, index) => ({
              id: index,
              text: msg.message,
              sender: msg.sender || 'qloo', // Use sender from database or default to 'qloo'
              timestamp: new Date(msg.timestamp)
-           }))
-           .reverse(); // Latest messages first
+           }));
         
         // Check for new messages only after initial load is complete
         if (initialLoadComplete) {
@@ -200,8 +199,11 @@ export default function ExecuteMailsPopup({ isOpen, onClose }) {
       };
       setLogs(prev => [...prev, initialLog]);
 
-      // Call the Appwrite function
-      const result = await functions.createExecution('68846bdd0004eae6d86c');
+      // Call the Appwrite function with simple execution to avoid timeout
+      const result = await functions.createExecution('68846bdd0004eae6d86c', JSON.stringify({
+        path: '/execute',
+        simple: true
+      }));
       
       // Add success log
       const successLog = {

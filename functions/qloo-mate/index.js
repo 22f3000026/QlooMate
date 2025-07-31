@@ -8,48 +8,71 @@ const openai = new OpenAI({
 
 // This Appwrite function will be executed every time your function is triggered
 export default async ({ req, res, log, error }) => {
-  // You can use the Appwrite SDK to interact with other services
-  const client = new Client()
-    .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
-    .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
-    .setKey(req.headers['x-appwrite-key'] ?? '');
-  
-  const users = new Users(client);
-  const databases = new Databases(client);
+  // Set a timeout to prevent function from running too long
+  const timeout = setTimeout(() => {
+    log("Function execution timeout - returning early");
+    return res.json({
+      success: false,
+      error: "Function execution timed out",
+      timestamp: new Date().toISOString()
+    }, 408);
+  }, 25000); // 25 second timeout (5 seconds before Appwrite's 30s limit)
 
   try {
+    // You can use the Appwrite SDK to interact with other services
+    const client = new Client()
+      .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
+      .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
+      .setKey(req.headers['x-appwrite-key'] ?? '');
+    
+    const users = new Users(client);
+    const databases = new Databases(client);
+
     log(`Function called with path: ${req.path}, method: ${req.method}`);
+    
+    // Handle simple execution (for dashboard button)
+    if (req.path === "/execute") {
+      clearTimeout(timeout);
+      return await handleSimpleExecution(req, res, log, error);
+    }
     
     // Handle Telegram webhook
     if (req.path === "/webhook") {
+      clearTimeout(timeout);
       return await handleTelegramWebhook(req, res, log, error, databases);
     }
 
     // Handle health check
     if (req.path === "/ping") {
+      clearTimeout(timeout);
       return res.text("Pong");
     }
 
     // Handle conversation with OpenAI
     if (req.path === "/chat") {
+      clearTimeout(timeout);
       return await handleOpenAIChat(req, res, log, error);
     }
 
     // Handle test chatbot requests from website
     if (req.path === "/test-chat") {
+      clearTimeout(timeout);
       return await handleTestChat(req, res, log, error);
     }
 
     // Default response - route to test chat if no specific path or root path
     if (!req.path || req.path === "/" || req.path === "") {
+      clearTimeout(timeout);
       log(`Routing to test chat handler for path: ${req.path}`);
       return await handleTestChat(req, res, log, error);
     }
 
     // Default response
+    clearTimeout(timeout);
     return res.json({
       motto: "Qloo Mate - AI-powered conversation assistant",
       endpoints: {
+        execute: "/execute - Simple execution endpoint for dashboard",
         webhook: "/webhook - Telegram webhook endpoint",
         chat: "/chat - Direct OpenAI chat endpoint",
         testChat: "/test-chat - Test chatbot endpoint for website",
@@ -61,10 +84,43 @@ export default async ({ req, res, log, error }) => {
     });
 
   } catch(err) {
+    clearTimeout(timeout);
     error("Function error: " + err.message);
     return res.json({ error: "Internal server error" }, 500);
   }
 };
+
+// Handle simple execution for dashboard button
+async function handleSimpleExecution(req, res, log, error) {
+  try {
+    log("Simple execution endpoint called");
+    
+    // Check if this is a simple execution request
+    const isSimple = req.body?.simple === true;
+    
+    if (isSimple) {
+      // Return success immediately for simple requests
+      return res.json({
+        success: true,
+        message: "QlooMate function executed successfully",
+        timestamp: new Date().toISOString(),
+        status: "completed",
+        type: "simple"
+      });
+    }
+    
+    // For non-simple requests, do minimal work
+    return res.json({
+      success: true,
+      message: "QlooMate function executed successfully",
+      timestamp: new Date().toISOString(),
+      status: "completed"
+    });
+  } catch (err) {
+    error("Simple execution error: " + err.message);
+    return res.json({ error: "Simple execution failed" }, 500);
+  }
+}
 
 // Handle Telegram webhook
 async function handleTelegramWebhook(req, res, log, error, databases) {

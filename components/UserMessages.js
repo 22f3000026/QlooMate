@@ -30,6 +30,7 @@ export default function UserMessages({ userId, refreshTrigger, emails, emailsLoa
       
       if (response && response.messages) {
         const parsedMessages = JSON.parse(response.messages);
+        // Messages are already in correct order (latest first) from database
         setMessages(parsedMessages);
         
         // Check if new messages were added
